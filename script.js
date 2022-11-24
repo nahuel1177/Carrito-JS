@@ -1,114 +1,198 @@
-const producto1 = {
+import data from './productos.json' assert { type: 'json'};
+import { Carrito } from "./Carrito.js";
 
-    id: 0,
-    nombre: 'Desktop',
-    precio: 130,
 
-}
+let shopContent = document.getElementById("cardsContainer");
+let carrito = new Carrito();
+let lengthCarrito = 0;
+let cantCarrito = 0;
+let flag = 0;
+let i=0;
+data.productos.forEach((producto) => {
 
-const producto2 = {
+    let content = document.createElement("div");
+    content.className = "card";
+    content.innerHTML = `
+    <img src="${producto.imagen}" class="card-img-top">
+    <div class="card-body">
+    <h6 class="card-title">${producto.tipo} ${producto.descripcion}</h6>
+    <p class="card-text">$${producto.precio}</p>
+    </div>`;
 
-    id: 1,
-    nombre: 'Laptop',
-    precio: 350,
+    shopContent.append(content);
 
-}
+    let agregar = document.createElement("button");
+    agregar.className = "btn btn-outline-primary";
+    agregar.innerText = "Agregar";
+    agregar.id = "btnAgregar";
+    agregar.addEventListener("click", llamarBtnAgregar);
 
-const producto3 = {
+    function llamarBtnAgregar() {
 
-    id: 2,
-    nombre: 'Keyword',
-    precio: 120,
-
-}
-
-const producto4 = {
-
-    id: 3,
-    nombre: 'Mouse',
-    precio: 90,
-
-}
-
-function itemAgregado() {
-
-    alert('Producto agregado al carrito!');
-
-}
-
-function agregarCarrito(opcion) {
-
-    switch (opcion) {
-
-        case '1': carrito.push(producto1.precio);
-            itemAgregado();
-            break;
-        case '2': carrito.push(producto2.precio);
-            itemAgregado();
-            break;
-        case '3': carrito.push(producto3.precio);
-            itemAgregado();
-            break;
-        case '4': carrito.push(producto4.precio);
-            itemAgregado();
-            break;
+        //carrito.agregarProducto(producto);
+        flag = 1;
+        
+        const productoJSON = JSON.stringify(producto);
+        addProductoSt(i, productoJSON);
+        i++;
+        Swal.fire({
+            title: 'Tu Compra',
+            text: 'Producto agregado',
+            icon: 'success',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'Aceptar'
+        })
+        cantCarrito = document.getElementById("cantidadCarrito");
+        cantCarrito.innerHTML = `${localStorage.length}`;
     }
-}
+    content.append(agregar);
+})
 
-function sumarTotal() {
+let btnCarrito = document.getElementById("btnCarrito");
+btnCarrito.addEventListener("click", mostrarCarrito);
 
-    let total = carrito.reduce((a, b) => a + b, 0)
+function mostrarCarrito() {
 
-    return total;
-}
+    let items='';
+    let importeTotal = 0;
 
-function Venta() {
+    for (const key in localStorage) {
+        {
+            const productoJSON = localStorage.getItem(key);
+            const producto = JSON.parse(productoJSON);
+            if (flag == 0) {
 
-    if (carrito.length != 0) {
-        var monto = sumarTotal();
-        alert('El monto a pagar es: $' + monto + '\nGracias por su compra!');
-    }
-}
-
-function Cierre(){
-    if(venta == true){
-        Venta();
-        }else alert('No hay realizado compras. Gracias por visitar nuestro Sitio!');
-}
-
-function Menu() {
-    venta = true;
-    var opcion = prompt("Elige producto:\n\n" + "1 - Notebook\n2 - Desktop\n3 - Teclado\n4 - Mouse\n0 - Terminar Compra");
-
-    while (opcion != 0) {
-
-        if ((opcion < 0) || (opcion > 4)) {
-            alert('No tenemos ese producto');
-            Menu();
-        }
-
-        while ((opcion > 0) && (opcion < 5)) {
-
-            agregarCarrito(opcion);
-            opcion = prompt("Elige producto:\n\n" + "1 - Notebook\n2 - Desktop\n3 - Teclado\n4 - Mouse\n0 - Terminar Compra");
-
-        }
-    }
-    if (carrito.length == 0) {
-        let opcion2 = prompt('No hay productos en su carrito.\nEsta seguro que no desea comprar?\n1 - Seguir Comprando\n2 - Cerrar Carrito')
-        switch (opcion2) {
-            case '1': Menu();
+                Swal.fire({
+                    title: 'Carrito Vacio',
+                    icon: 'warning',
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText:
+                        '<i class="fa fa-thumbs-up"></i>Volver'
+                });
                 break;
-            case '2': venta = false;
-                break;
+            } else {
+                items = items + '<tr>' + '<td>' + producto.tipo + '</td>' + '<td align="center">' + producto.descripcion + '</td>' +
+                    '<td align="right">' + '$' + producto.precio + '</td>' + '<td align="center">'
+                    //<button type="button" class="btn btn-outline-danger" id="btnDel" onclick="eliminarItem(producto.id,productoJSON)">x</button></td>'
+                    + '</tr>';
+                importeTotal = importeTotal + producto.precio;
+
+            }
+
         }
+
+        Swal.fire({
+            title: 'Tu Compra',
+            html: `<div class="container">
+                <table class="table table-hover">
+                <tr>
+                    <td>Tipo</td>
+                    <td align="center">Descripcion</td>
+                    <td align="right">Precio</td>
+                    
+                </tr>
+                    ${items}
+                </table>
+                </div><br>
+               <div table class="table table-hover">Total a Pagar: $${importeTotal}</p>`,
+            showCloseButton: true,
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            focusConfirm: false,
+            confirmButtonText:
+                '<i class="fa fa-thumbs-up"></i> Comprar',
+            confirmButtonAriaLabel: 'Thumbs up, great!',
+            cancelButtonText:
+                '<i class="fa fa-thumbs-up"></i> Volver',
+            cancelButtonAriaLabel: 'Thumbs down'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                cleanStorage();
+                flag = 0;
+                cantCarrito = document.getElementById("cantidadCarrito");
+                cantCarrito.innerHTML = null;
+                Swal.fire(
+                    '',
+                    'Su pago ha sido procesado.',
+                    'success',
+                )
+            }
+        })
+
     }
 
 }
 
-var carrito = [];
-let venta;
-Menu();
-Cierre();
+function eliminarItem(key, producto) {
+    removeProductoSt(key, producto);
+}
 
+//  ---Para categorias---
+// function mostrarProductos(tipoProducto) {
+
+//     let shopContent = document.getElementById("cardsContainer")
+
+//     data.productos.forEach((producto) => {
+
+//         if (producto.tipo == "tipoProducto") {
+
+//             let content = document.createElement("div")
+//             content.className = "card"
+//             content.innerHTML = `
+//         <img src="${producto.imagen}" class="card-img-top">
+//         <div class="card-body">
+//         <h6 class="card-title">${producto.tipo} ${producto.descripcion}</h6>
+//         <p class="card-text">$${producto.precio}</p>
+//         </div>`;
+
+//             shopContent.append(content)
+
+//             let comprar = document.createElement("button")
+//             comprar.className = "btn btn-outline-primary";
+//             comprar.innerText = "Agregar"
+//             comprar.id = "btnAgregar"
+//             comprar.addEventListener("click", llamarBtnAgregar)
+
+//             function llamarBtnAgregar() {
+
+//                 carrito.agregarProducto(producto);
+//                 console.log(carrito.productos);
+
+//                 Swal.fire({
+//                     title: 'Carrito',
+//                     text: 'Producto agregado',
+//                     icon: 'success',
+//                     confirmButtonColor: '#3085d6',
+//                     confirmButtonText: 'Aceptar'
+//                 })
+//             }
+//             content.append(comprar)
+//         }
+//     })
+// }
+
+function addProductoSt(clave, producto) {
+
+    localStorage.setItem(clave, producto);
+
+}
+
+function getProductoSt(clave) {
+
+    let activo = localStorage.getItem(clave);
+
+    return activo;
+}
+
+function removeProductoSt(clave, producto) {
+
+    localStorage.removeItem(clave, producto);
+
+}
+
+function cleanStorage() {
+
+    localStorage.clear();
+
+}
 
