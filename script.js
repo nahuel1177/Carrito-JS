@@ -7,11 +7,13 @@ let carrito = new Carrito();
 let lengthCarrito = 0;
 let cantCarrito = 0;
 let flag = 0;
-let i=0;
+let i = 0;
+
 data.productos.forEach((producto) => {
 
     let content = document.createElement("div");
     content.className = "card";
+    content.id = "listado";
     content.innerHTML = `
     <img src="${producto.imagen}" class="card-img-top">
     <div class="card-body">
@@ -29,9 +31,8 @@ data.productos.forEach((producto) => {
 
     function llamarBtnAgregar() {
 
-        //carrito.agregarProducto(producto);
         flag = 1;
-        
+
         const productoJSON = JSON.stringify(producto);
         addProductoSt(i, productoJSON);
         i++;
@@ -46,6 +47,7 @@ data.productos.forEach((producto) => {
         cantCarrito.innerHTML = `${localStorage.length}`;
     }
     content.append(agregar);
+
 })
 
 let btnCarrito = document.getElementById("btnCarrito");
@@ -53,7 +55,7 @@ btnCarrito.addEventListener("click", mostrarCarrito);
 
 function mostrarCarrito() {
 
-    let items='';
+    let items = '';
     let importeTotal = 0;
 
     for (const key in localStorage) {
@@ -76,7 +78,6 @@ function mostrarCarrito() {
                     //<button type="button" class="btn btn-outline-danger" id="btnDel" onclick="eliminarItem(producto.id,productoJSON)">x</button></td>'
                     + '</tr>';
                 importeTotal = importeTotal + producto.precio;
-
             }
 
         }
@@ -118,9 +119,7 @@ function mostrarCarrito() {
                 )
             }
         })
-
     }
-
 }
 
 function eliminarItem(key, producto) {
@@ -128,53 +127,94 @@ function eliminarItem(key, producto) {
 }
 
 //  ---Para categorias---
-// function mostrarProductos(tipoProducto) {
 
-//     let shopContent = document.getElementById("cardsContainer")
+let btnCPU = document.getElementById('btnCPU');
+btnCPU.addEventListener("click", procesadores);
 
-//     data.productos.forEach((producto) => {
 
-//         if (producto.tipo == "tipoProducto") {
+function procesadores(){
 
-//             let content = document.createElement("div")
-//             content.className = "card"
-//             content.innerHTML = `
-//         <img src="${producto.imagen}" class="card-img-top">
-//         <div class="card-body">
-//         <h6 class="card-title">${producto.tipo} ${producto.descripcion}</h6>
-//         <p class="card-text">$${producto.precio}</p>
-//         </div>`;
+    let content = document.getElementById("cardsContainer");
+    content.innerHTML='';
 
-//             shopContent.append(content)
+    mostrarProductosCat('Procesador');
 
-//             let comprar = document.createElement("button")
-//             comprar.className = "btn btn-outline-primary";
-//             comprar.innerText = "Agregar"
-//             comprar.id = "btnAgregar"
-//             comprar.addEventListener("click", llamarBtnAgregar)
+}
 
-//             function llamarBtnAgregar() {
+let btnMothers = document.getElementById('btnMothers');
+btnMothers.addEventListener("click", motherboards);
 
-//                 carrito.agregarProducto(producto);
-//                 console.log(carrito.productos);
+function motherboards(){
 
-//                 Swal.fire({
-//                     title: 'Carrito',
-//                     text: 'Producto agregado',
-//                     icon: 'success',
-//                     confirmButtonColor: '#3085d6',
-//                     confirmButtonText: 'Aceptar'
-//                 })
-//             }
-//             content.append(comprar)
-//         }
-//     })
-// }
+    let content = document.getElementById("cardsContainer");
+    content.innerHTML='';
+
+    mostrarProductosCat('Motherboard');
+
+}
+
+let btnMemorias = document.getElementById('btnMemorias');
+btnMemorias.addEventListener("click", memorias);
+
+function memorias(){
+
+    let content = document.getElementById("cardsContainer");
+    content.innerHTML='';
+
+    mostrarProductosCat('Memoria');
+
+}
+
+function mostrarProductosCat(tipoProducto) {
+
+    data.productos.forEach((producto) => {
+
+        if (producto.tipo == tipoProducto) {
+
+            let content = document.createElement("div")
+            
+            content.className = "card";
+            content.id = "listado";
+            content.innerHTML = `
+            <img src="${producto.imagen}" class="card-img-top">
+            <div class="card-body">
+            <h6 class="card-title">${producto.tipo} ${producto.descripcion}</h6>
+            <p class="card-text">$${producto.precio}</p>
+            </div>`;
+
+            shopContent.append(content);
+
+            let comprar = document.createElement("button")
+            comprar.className = "btn btn-outline-primary";
+            comprar.innerText = "Agregar"
+            comprar.id = "btnAgregar"
+            comprar.addEventListener("click", llamarBtnAgregar)
+
+            function llamarBtnAgregar() {
+
+                flag = 1;
+
+                const productoJSON = JSON.stringify(producto);
+                addProductoSt(i, productoJSON);
+                i++;
+                Swal.fire({
+                    title: 'Tu Compra',
+                    text: 'Producto agregado',
+                    icon: 'success',
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'Aceptar'
+                })
+                cantCarrito = document.getElementById("cantidadCarrito");
+                cantCarrito.innerHTML = `${localStorage.length}`;
+            }
+            content.append(comprar)
+        }
+    })
+}
 
 function addProductoSt(clave, producto) {
 
     localStorage.setItem(clave, producto);
-
 }
 
 function getProductoSt(clave) {
@@ -187,12 +227,10 @@ function getProductoSt(clave) {
 function removeProductoSt(clave, producto) {
 
     localStorage.removeItem(clave, producto);
-
 }
 
 function cleanStorage() {
 
     localStorage.clear();
-
 }
 
