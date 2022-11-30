@@ -30,14 +30,14 @@
         },
         {
             "id": 4,
-            "tipo": "Keyboard",
+            "tipo": "Teclado",
             "descripcion": "K1",
             "precio": 120,
             "imagen": "resources/images/key1.png"
         },
         {
             "id": 5,
-            "tipo": "Keyboard",
+            "tipo": "Teclado",
             "descripcion": "K2",
             "precio": 150,
             "imagen": "resources/images/key2.png"

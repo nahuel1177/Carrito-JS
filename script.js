@@ -1,4 +1,4 @@
-import data from './productos.json' assert { type: 'json'};
+//import data from './productos.json' assert { type: 'json'};
 import { Carrito } from "./Carrito.js";
 
 
@@ -8,31 +8,34 @@ let lengthCarrito = 0;
 let cantCarrito = 0;
 let flag = 0;
 let i = 0;
+let datos;
 
-data.productos.forEach((producto) => {
-
-    let content = document.createElement("div");
-    content.className = "card";
-    content.id = "listado";
-    content.innerHTML = `
-    <img src="${producto.imagen}" class="card-img-top">
-    <div class="card-body">
-    <h6 class="card-title">${producto.tipo} ${producto.descripcion}</h6>
-    <p class="card-text">$${producto.precio}</p>
+fetch("./productos.json")
+.then(res => res.json())
+.then(data => data.productos.forEach((producto) => {
+        
+        let content = document.createElement("div");
+        content.className = "card";
+        content.id = "listado";
+        content.innerHTML = `
+        <img src="${producto.imagen}" class="card-img-top">
+        <div class="card-body">
+        <h6 class="card-title">${producto.tipo} ${producto.descripcion}</h6>
+        <p class="card-text">$${producto.precio}</p>
     </div>`;
 
     shopContent.append(content);
-
+    
     let agregar = document.createElement("button");
     agregar.className = "btn btn-outline-primary";
     agregar.innerText = "Agregar";
     agregar.id = "btnAgregar";
     agregar.addEventListener("click", llamarBtnAgregar);
-
+    
     function llamarBtnAgregar() {
-
+        
         flag = 1;
-
+        
         const productoJSON = JSON.stringify(producto);
         addProductoSt(i, productoJSON);
         i++;
@@ -47,8 +50,10 @@ data.productos.forEach((producto) => {
         cantCarrito.innerHTML = `${localStorage.length}`;
     }
     content.append(agregar);
+    
+}))
 
-})
+
 
 let btnCarrito = document.getElementById("btnCarrito");
 btnCarrito.addEventListener("click", mostrarCarrito);
@@ -165,9 +170,96 @@ function memorias(){
 
 }
 
+let btnDiscos = document.getElementById('btnDiscos');
+btnDiscos.addEventListener("click", discos);
+
+function discos(){
+
+    let content = document.getElementById("cardsContainer");
+    content.innerHTML='';
+
+    mostrarProductosCat('Almacenamiento');
+
+}
+
+let btnVideo = document.getElementById('btnVideo');
+btnVideo.addEventListener("click", videos);
+
+function videos(){
+
+    let content = document.getElementById("cardsContainer");
+    content.innerHTML='';
+
+    mostrarProductosCat('Placa de Video');
+
+}
+
+let btnFuentes = document.getElementById('btnFuentes');
+btnFuentes.addEventListener("click", fuentes);
+
+function fuentes(){
+
+    let content = document.getElementById("cardsContainer");
+    content.innerHTML='';
+
+    mostrarProductosCat('Fuente');
+
+}
+
+let btnGabinetes = document.getElementById('btnGabinetes');
+btnGabinetes.addEventListener("click", gabinetes);
+
+function gabinetes(){
+
+    let content = document.getElementById("cardsContainer");
+    content.innerHTML='';
+
+    mostrarProductosCat('Gabinete');
+
+}
+
+let btnCoolers = document.getElementById('btnCoolers');
+btnCoolers.addEventListener("click", coolers);
+
+function coolers(){
+
+    let content = document.getElementById("cardsContainer");
+    content.innerHTML='';
+
+    mostrarProductosCat('Cooler');
+
+}
+
+let btnMonitores = document.getElementById('btnMonitores');
+btnMonitores.addEventListener("click", monitores);
+
+function monitores(){
+
+    let content = document.getElementById("cardsContainer");
+    content.innerHTML='';
+
+    mostrarProductosCat('Monitor');
+
+}
+
+let btnPerifericos = document.getElementById('btnPerifericos');
+btnPerifericos.addEventListener("click", perifericos);
+
+function perifericos(){
+
+    let content = document.getElementById("cardsContainer");
+    content.innerHTML='';
+
+    mostrarProductosCat('Mouse');
+    mostrarProductosCat('Teclado');
+
+}
+
 function mostrarProductosCat(tipoProducto) {
 
-    data.productos.forEach((producto) => {
+    fetch("./productos.json")
+    .then(res => res.json())
+    .then(data =>data.productos.forEach((producto) => {
 
         if (producto.tipo == tipoProducto) {
 
@@ -209,7 +301,7 @@ function mostrarProductosCat(tipoProducto) {
             }
             content.append(comprar)
         }
-    })
+    }))
 }
 
 function addProductoSt(clave, producto) {
